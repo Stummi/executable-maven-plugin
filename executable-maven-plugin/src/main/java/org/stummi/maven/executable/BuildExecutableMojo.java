@@ -1,8 +1,11 @@
 package org.stummi.maven.executable;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.nio.channels.SeekableByteChannel;
 import java.nio.charset.StandardCharsets;
@@ -10,7 +13,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.PosixFilePermission;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +39,8 @@ import lombok.Value;
 
 @Mojo(name = "build-executable", defaultPhase = LifecyclePhase.PACKAGE)
 public class BuildExecutableMojo extends AbstractMojo {
+	private static final String PLUGIN_VERSION;
+
 	@Parameter(property = "executable.chmod", defaultValue = "755")
 	private String chmod;
 
@@ -42,6 +49,14 @@ public class BuildExecutableMojo extends AbstractMojo {
 
 	@Parameter(property = "executable.dataoffset", defaultValue = "4096")
 	private long dataOffset;
+
+	static {
+		try (InputStream in = BuildExecutableMojo.class.getResourceAsStream("/executable-maven-plugin-version")) {
+			PLUGIN_VERSION = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8)).readLine();
+		} catch (IOException e) {
+			throw new RuntimeException(e.getLocalizedMessage(), e);
+		}
+	}
 
 	private static final List<PosixPermissionFlag> POSIX_FLAGS = Arrays.asList( //
 			new PosixPermissionFlag(0001, PosixFilePermission.OTHERS_EXECUTE), //
@@ -104,10 +119,13 @@ public class BuildExecutableMojo extends AbstractMojo {
 	}
 
 	private void setDataOffsetPosition(SeekableByteChannel channel) throws IOException {
-		if (channel.position() >= dataOffset) {
-			getLog().error("Wrapper script is larger then the data offset (" + channel.position() + " >= " + dataOffset
+		long position = channel.position();
+		if (position >= dataOffset) {
+			getLog().error("Wrapper script is larger then the data offset (" + position + " >= " + dataOffset
 					+ "\nIncrease the dataOffset value in plugin configuration");
 			throw new IOException("script length exceeded data offset");
+		} else {
+			getLog().info("wrapper script size: " + position);
 		}
 
 		channel.position(dataOffset);
@@ -120,6 +138,8 @@ public class BuildExecutableMojo extends AbstractMojo {
 		Map<String, Object> ctx = new HashMap<>();
 		ctx.put("project", mavenProject);
 		ctx.put("dataOffset", dataOffset);
+		ctx.put("pluginVersion", PLUGIN_VERSION);
+		ctx.put("buildTime", new SimpleDateFormat("yyyy-MM-dd HH:mm:ss z").format(new Date()));
 		tpl.apply(ctx, writer);
 		writer.flush();
 	}

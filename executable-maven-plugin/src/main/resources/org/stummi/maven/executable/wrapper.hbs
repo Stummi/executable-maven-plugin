@@ -1,4 +1,14 @@
 #!/bin/sh -e
+
+################################
+# GENERATED FILE - DO NOT EDIT # 
+################################
+
+#####
+# Build time: {{buildTime}}
+# Plugin Version: {{pluginVersion}}
+#####
+
 groupId="{{project.groupId}}"
 artifactId="{{project.artifactId}}"
 version="{{project.version}}"
@@ -8,12 +18,16 @@ name="{{project.name}}"
 
 # echo "Welcome to ${name} ${version}"
 
-tmpDir=$(mktemp -d)
+tmpDir=$(mktemp -dt "${artifactId}.XXXX")
 trap 'rm -rf "$tmpDir"' EXIT
 
 case $0 in
  /*) file=$0 ;;
- *) file=$PWD/$0 ;;
+ */*) file=$PWD/$0 ;;
+ *)
+  echo "Cannot determine executable path"
+  exit 1 
+  ;;
 esac
 
 (
