@@ -21,6 +21,6 @@ esac
     dd if="$file" bs={{dataOffset}} skip=1 2> /dev/null | tar xz
 )
 
-exec "$tmpDir/jre/bin/java" -jar "$tmpDir/"*.jar "$@"
+"$tmpDir/jre/bin/java" -jar "$tmpDir/"*.jar "$@"
+exit
 
-exit 1 # should not happen
