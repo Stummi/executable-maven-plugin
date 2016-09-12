@@ -6,7 +6,7 @@ This project is just a proof of concept and far from beeing usable productive. T
 
 ## Usage
 
-An example plugin configuration can be found in the [test-maven-executable-plugin](test-maven-executable-plugin/pom.xml) project. To use it, simply type:
+An example plugin configuration can be found in the [test-executable-maven-plugin](test-executable-maven-plugin/pom.xml) project. To use it, simply type:
 
 ```sh
 $ mvn package
