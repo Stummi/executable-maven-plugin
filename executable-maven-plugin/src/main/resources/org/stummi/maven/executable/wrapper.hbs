@@ -1,0 +1,26 @@
+#!/bin/sh -e
+groupId="{{project.groupId}}"
+artifactId="{{project.artifactId}}"
+version="{{project.version}}"
+name="{{project.name}}"
+
+{{> tools }}
+
+# echo "Welcome to ${name} ${version}"
+
+tmpDir=$(mktemp -d)
+trap 'rm -rf "$tmpDir"' EXIT
+
+case $0 in
+ /*) file=$0 ;;
+ *) file=$PWD/$0 ;;
+esac
+
+(
+    cd "$tmpDir" &&
+    dd if="$file" bs={{dataOffset}} skip=1 2> /dev/null | tar xz
+)
+
+exec "$tmpDir/jre/bin/java" -jar "$tmpDir/"*.jar "$@"
+
+exit 1 # should not happen

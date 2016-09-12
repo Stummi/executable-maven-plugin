@@ -1,0 +1,9 @@
+checkTool() {
+	if ! type "$1" >/dev/null; then
+	    echo "failed to find command '$1' which is required by this application"
+	    exit 1
+	fi
+}
+
+checkTool tar
+checkTool dd
