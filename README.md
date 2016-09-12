@@ -1,8 +1,8 @@
 # executable-maven-plugin
 
-An maven plugin which packages your java application together with a JRE into a single executable archive file. The result is a single file with minimal dependencies on the host system, which can be dropped and runned anywhere by a User, similar to statically linked C or C++ applications
+An maven plugin which packages your java application together with a JRE into a single executable archive file. The result is a single file with minimal dependencies on the host system, which can be dropped and run anywhere by a User, similar to statically linked C or C++ applications
 
-This project is just a proof of concept and far from beeing usable productive. The biggest limitation right now is that it only will run on Linux and only create linux compatible executable files.
+This project is just a proof of concept and far from beeing usable productive. The biggest limitation right now is that it only will run on Linux and only create Linux compatible executable files.
 
 ## Usage
 
