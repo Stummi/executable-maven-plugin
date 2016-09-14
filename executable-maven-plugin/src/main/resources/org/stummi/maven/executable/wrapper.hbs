@@ -13,28 +13,42 @@ groupId="{{project.groupId}}"
 artifactId="{{project.artifactId}}"
 version="{{project.version}}"
 name="{{project.name}}"
-
-{{> tools }}
-
-# echo "Welcome to ${name} ${version}"
+jarFile="{{jarFile}}"
 
 tmpDir=$(mktemp -dt "${artifactId}.XXXX")
 trap 'rm -rf "$tmpDir"' EXIT
 
+{{> tools }}
+
 case $0 in
- /*) file=$0 ;;
- */*) file=$PWD/$0 ;;
- *)
-  echo "Cannot determine executable path"
-  exit 1 
-  ;;
+	/*) file=$0 ;;
+	*/*) file=$PWD/$0 ;;
+	*)
+		die "Cannot determine executable path"
+	;;
 esac
 
-(
-    cd "$tmpDir" &&
-    dd if="$file" bs={{dataOffset}} skip=1 2> /dev/null | tar xz
-)
+{{> functions}}
 
-"$tmpDir/jre/bin/java" -jar "$tmpDir/"*.jar "$@"
+case $1 in
+  --wrapper-help)
+	cat <<-EOF
+		{{> helpText}}
+	EOF
+	exit 0 ;;
+  --wrapper-version)
+  	cat <<-EOF
+		{{> versionText}}
+	EOF
+	exit 0 ;;
+  --wrapper-extract)
+    extractTo "${2:-.}"
+    exit 0 ;;
+  --) shift 1 ;;
+esac
+
+extractTo "$tmpDir"
+
+"$tmpDir/jre/bin/java" -jar "$tmpDir/${jarFile}" "$@"
 exit
 

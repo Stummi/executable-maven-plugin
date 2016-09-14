@@ -18,3 +18,11 @@ which creates a runnable file under target with the same name as the jar file na
 $ target/test-executable-maven-plugin-0.1.0-SNAPSHOT
 Hello, World!
 ```
+
+## Scratchpad
+
+Unordered list of stuff to add
+* Support for Windows binaries (They will need a whole new approach)
+* Cross-Building (Windows runnables on linux and vice verca)
+* Add support for Java 9 / JigSaw / JLink
+* More Documentation

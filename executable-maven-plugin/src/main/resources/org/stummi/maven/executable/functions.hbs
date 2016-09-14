@@ -1,0 +1,12 @@
+die() {
+	echo "$@"
+	exit 1;
+}
+
+extractTo() {
+	[ -z "$1" ] && die "extract needs an argument" 
+	(    
+	    cd "$1" &&
+	    dd if="$file" bs={{dataOffset}} skip=1 2> /dev/null | tar xz
+	) 
+}
